@@ -20,6 +20,8 @@ use Illuminate\Support\Facades\Route;
 //Route::post('/login', [AuthController::class, 'login']);
 
 Route::post('/times', [TimeController::class, 'store']);
+Route::get('/times/{id}', [TimeController::class, 'show']);
+Route::get('/times', [TimeController::class, 'index']);
 
 Route::middleware('auth:sanctum')->group(function () {
     //Route::post('/time', [TimeController::class, 'store']);

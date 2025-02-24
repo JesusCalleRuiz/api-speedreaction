@@ -10,6 +10,56 @@
     },
     "paths": {
         "/api/times": {
+            "get": {
+                "tags": [
+                    "Time"
+                ],
+                "summary": "Obtener todos los tiempos registrados",
+                "operationId": "5429d372393a36bc19c15f134f15102b",
+                "responses": {
+                    "200": {
+                        "description": "Lista de tiempos registrados",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "user_id": {
+                                                        "type": "integer",
+                                                        "example": 3
+                                                    },
+                                                    "time": {
+                                                        "type": "number",
+                                                        "format": "float",
+                                                        "example": 0.189
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
             "post": {
                 "tags": [
                     "Time"
@@ -42,7 +92,7 @@
                     }
                 },
                 "responses": {
-                    "201": {
+                    "200": {
                         "description": "Resultado del registro del registro del tiempo",
                         "content": {
                             "application/json": {
@@ -66,7 +116,7 @@
                             }
                         }
                     },
-                    "400": {
+                    "404": {
                         "description": "Error asociado al registro del tiempo",
                         "content": {
                             "application/json": {
@@ -83,6 +133,89 @@
                                         "message": {
                                             "type": "string",
                                             "example": "Missing required parameter time"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/times/{id}": {
+            "get": {
+                "tags": [
+                    "Time"
+                ],
+                "summary": "Obtener un tiempo específico por ID",
+                "operationId": "9be4dd004c164c9d077844120e598cad",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detalle del tiempo registrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "user_id": {
+                                                    "type": "integer",
+                                                    "example": 3
+                                                },
+                                                "time": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 0.189
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Tiempo no encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "error": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Time not found"
                                         }
                                     },
                                     "type": "object"
