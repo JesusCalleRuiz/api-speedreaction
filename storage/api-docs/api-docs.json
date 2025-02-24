@@ -1,0 +1,103 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "SPEEDREACTION API",
+        "description": "L5 Swagger OpenApi para la interface de recepcion de tiempos generados por SpeedReaction",
+        "contact": {
+            "email": "jesus.calle.ruiz8@gmail.com"
+        },
+        "version": "1.0"
+    },
+    "paths": {
+        "/api/time": {
+            "post": {
+                "tags": [
+                    "Time"
+                ],
+                "summary": "Almacenar el tiempo de un usuario",
+                "operationId": "cf22c7b486009a1673a866b663d30d5d",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "user_id",
+                                    "time"
+                                ],
+                                "properties": {
+                                    "user_id": {
+                                        "type": "integer",
+                                        "example": "1"
+                                    },
+                                    "time": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": "0.189"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Resultado del registro del registro del tiempo",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "error": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Time has been recorded"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error asociado al registro del tiempo",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "error": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Missing required parameter time"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Time",
+            "description": "Time"
+        }
+    ]
+}
