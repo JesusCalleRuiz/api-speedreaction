@@ -20,7 +20,7 @@ class TimeController extends Controller
 {
     /**
      * @OA\Post(
-     *     path="/api/time",
+     *     path="/api/times",
      *     tags={"Time"},
      *     summary="Almacenar el tiempo de un usuario",
      *     @OA\RequestBody(

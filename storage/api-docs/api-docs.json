@@ -9,13 +9,13 @@
         "version": "1.0"
     },
     "paths": {
-        "/api/time": {
+        "/api/times": {
             "post": {
                 "tags": [
                     "Time"
                 ],
                 "summary": "Almacenar el tiempo de un usuario",
-                "operationId": "cf22c7b486009a1673a866b663d30d5d",
+                "operationId": "b9f4579b670c2d59a0839de6dcb06925",
                 "requestBody": {
                     "required": true,
                     "content": {
