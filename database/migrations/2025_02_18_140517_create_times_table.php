@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('times', function (Blueprint $table) {
             $table->id();
             $table->string('user_id');
-            $table->float('time');
+            $table->decimal('time',8,6);
             $table->timestamps();
         });
     }

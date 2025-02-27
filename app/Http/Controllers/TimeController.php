@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Time;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 
 /**
  * @OA\Info(
@@ -59,9 +60,10 @@ class TimeController extends Controller
         if($time == null){
             return response()->json(['success'=>false, 'error'=>true, 'message'=>'Missing required parameter time'], 404);
         }
+        $formattedTime = number_format($time, 6, '.', '');
         $nt = new Time();
-        $nt->user_id = 3;
-        $nt->time = $time;
+        $nt->user_id = auth()->id();
+        $nt->time = $formattedTime;
         $nt->save();
 
         return response()->json(['success'=>true, 'error'=>false, 'message'=>'Time has been save'], 200);
@@ -87,7 +89,15 @@ class TimeController extends Controller
      * )
      */
     public function index(): JsonResponse{
-        $times = Time::all();
+        $sql = "SELECT t.user_id, u.name, ROUND(t.time, 3) AS times, t.created_at
+                FROM times t
+                JOIN users u ON u.id = t.user_id
+                JOIN (
+                    SELECT user_id, MIN(time) AS min_time
+                    FROM times
+                    GROUP BY user_id
+                ) sub ON t.user_id = sub.user_id AND t.time = sub.min_time;";
+        $times = DB::select($sql);
         return response()->json(['success' => true, 'error'=>false, 'data' => $times], 200);
     }
 
@@ -132,5 +142,56 @@ class TimeController extends Controller
             return response()->json(['success' => false, 'error' => true, 'message' => 'Time not found'], 404);
         }
         return response()->json(['success' => true, 'error'=>false, 'data' => $time], 200);
+    }
+    /**
+     * @OA\Get(
+     *     path="/api/user/times",
+     *     tags={"Time"},
+     *     summary="Obtener los tiempos del usuario autenticado",
+     *     description="Recupera todos los tiempos registrados del usuario actualmente autenticado.",
+     *     security={{ "bearerAuth":{} }},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Lista de tiempos del usuario autenticado",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="data", type="array",
+     *                 @OA\Items(
+     *                     @OA\Property(property="id", type="integer", example=10),
+     *                     @OA\Property(property="user_id", type="integer", example=1),
+     *                     @OA\Property(property="time", type="float", example=0.189),
+     *                     @OA\Property(property="created_at", type="string", format="date-time", example="2024-02-24T12:34:56Z"),
+     *                 )
+     *             ),
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Usuario no autenticado",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="error", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Unauthenticated"),
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="No se encontraron tiempos para el usuario autenticado",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="error", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="No times found for this user"),
+     *         )
+     *     )
+     * )
+     */
+    public function showUserTimes(): JsonResponse{
+        $userId = auth()->id();
+        $times = Time::where('user_id', $userId)->orderBy('created_at', 'desc')->get();
+        $times = Time::where('user_id', $userId)->orderBy('created_at', 'desc')->selectRaw('ROUND(time, 3) as time, created_at')->get();
+        if ($times->isEmpty()) {
+            return response()->json(['success' => false, 'error' => true, 'message' => 'No times found for this user'], 404);
+        }
+        return response()->json(['success' => true, 'data' => $times], 200);
     }
 }
