@@ -64,7 +64,7 @@ class TimeController extends Controller
         $nt = new Time();
         $nt->user_id = auth()->id();
         $nt->time = $formattedTime;
-        if($formattedTime >= 0.1000){
+        if($formattedTime >= 0.10000){
             $nt->valid = true;
         }else{
             $nt->valid = false;
@@ -100,7 +100,7 @@ class TimeController extends Controller
                 JOIN (
                     SELECT user_id, MIN(time) AS min_time
                     FROM times
-                    WHERE time >= 0.1000
+                    WHERE valid = 1
                     GROUP BY user_id
                 ) sub ON t.user_id = sub.user_id AND t.time = sub.min_time;";
         $times = DB::select($sql);
@@ -193,7 +193,6 @@ class TimeController extends Controller
      */
     public function showUserTimes(): JsonResponse{
         $userId = auth()->id();
-        $times = Time::where('user_id', $userId)->orderBy('created_at', 'desc')->get();
         $times = Time::where('user_id', $userId)->orderBy('created_at', 'desc')->selectRaw('ROUND(time, 3) as time, created_at')->get();
         if ($times->isEmpty()) {
             return response()->json(['success' => false, 'error' => true, 'message' => 'No times found for this user'], 404);
