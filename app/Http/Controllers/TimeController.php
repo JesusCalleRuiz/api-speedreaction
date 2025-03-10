@@ -64,6 +64,11 @@ class TimeController extends Controller
         $nt = new Time();
         $nt->user_id = auth()->id();
         $nt->time = $formattedTime;
+        if($formattedTime >= 0.1000){
+            $nt->valid = true;
+        }else{
+            $nt->valid = false;
+        }
         $nt->save();
 
         return response()->json(['success'=>true, 'error'=>false, 'message'=>'Time has been save'], 200);
@@ -95,6 +100,7 @@ class TimeController extends Controller
                 JOIN (
                     SELECT user_id, MIN(time) AS min_time
                     FROM times
+                    WHERE time >= 0.1000
                     GROUP BY user_id
                 ) sub ON t.user_id = sub.user_id AND t.time = sub.min_time;";
         $times = DB::select($sql);
