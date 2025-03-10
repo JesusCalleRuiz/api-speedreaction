@@ -193,7 +193,7 @@ class TimeController extends Controller
      */
     public function showUserTimes(): JsonResponse{
         $userId = auth()->id();
-        $times = Time::where('user_id', $userId)->orderBy('created_at', 'desc')->selectRaw('ROUND(time, 3) as time, created_at')->get();
+        $times = Time::where('user_id', $userId)->orderBy('created_at', 'desc')->selectRaw('ROUND(time, 3) as time, created_at, valid')->get();
         if ($times->isEmpty()) {
             return response()->json(['success' => false, 'error' => true, 'message' => 'No times found for this user'], 404);
         }
