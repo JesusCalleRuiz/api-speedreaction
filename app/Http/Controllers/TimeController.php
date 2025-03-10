@@ -102,7 +102,8 @@ class TimeController extends Controller
                     FROM times
                     WHERE valid = 1
                     GROUP BY user_id
-                ) sub ON t.user_id = sub.user_id AND t.time = sub.min_time;";
+                ) sub ON t.user_id = sub.user_id AND t.time = sub.min_time
+                ORDER BY t.time ASC";
         $times = DB::select($sql);
         return response()->json(['success' => true, 'error'=>false, 'data' => $times], 200);
     }
