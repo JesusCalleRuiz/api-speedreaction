@@ -41,6 +41,7 @@ class AuthController extends Controller
     }
 
     public function login(Request $request){
+        $messages = [];
         $request->validate([
             'login' => 'required|string',
             'password' => 'required|string',
@@ -51,7 +52,10 @@ class AuthController extends Controller
             ->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
-            return response()->json(['error' => 'Credenciales incorrectas'], 401);
+            $messages['credentials'] = 'nombre de usuario o contraseña incorrectos.';
+        }
+        if (!empty($messages)) {
+            return response()->json(['errors' => $messages], 400);
         }
         $token = $user->createToken('auth_token')->plainTextToken;
         return response()->json(['token' => $token, 'user' => $user]);
