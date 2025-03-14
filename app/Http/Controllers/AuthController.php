@@ -12,6 +12,9 @@ class AuthController extends Controller
     public function register(Request $request){
         $messages = [];
 
+        if (!filter_var($request->email, FILTER_VALIDATE_EMAIL)) {
+            $messages['email_format'] = 'El correo electrónico no es válido.';
+        }
         if (User::where('name', $request->name)->exists()) {
             $messages['name'] = 'El nombre de usuario ya está en uso.';
         }
