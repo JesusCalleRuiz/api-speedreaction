@@ -10,11 +10,24 @@ use Illuminate\Support\Facades\Hash;
 class AuthController extends Controller
 {
     public function register(Request $request){
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6',
-        ]);
+        $messages = [];
+
+        if (User::where('name', $request->name)->exists()) {
+            $messages['name'] = 'El nombre de usuario ya está en uso.';
+        }
+
+        if (User::where('email', $request->email)->exists()) {
+            $messages['email'] = 'El correo electrónico ya está en uso.';
+        }
+
+        if (strlen($request->password) < 8) {
+            $messages['password'] = 'La contraseña debe tener al menos 8 caracteres.';
+        }
+
+        if (!empty($messages)) {
+            return response()->json(['errors' => $messages], 400);
+        }
+
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
