@@ -103,7 +103,8 @@ class TimeController extends Controller
                     WHERE valid = 1
                     GROUP BY user_id
                 ) sub ON t.user_id = sub.user_id AND t.time = sub.min_time
-                ORDER BY t.time ASC";
+                ORDER BY t.time ASC
+                LIMIT 100";
         $times = DB::select($sql);
         return response()->json(['success' => true, 'error'=>false, 'data' => $times], 200);
     }
@@ -192,12 +193,13 @@ class TimeController extends Controller
      *     )
      * )
      */
-    public function showUserTimes(): JsonResponse{
+    public function showUserTimes(Request $request): JsonResponse{
         $userId = auth()->id();
-        $times = Time::where('user_id', $userId)->orderBy('created_at', 'desc')->selectRaw('ROUND(time, 3) as time, created_at, valid')->get();
+        $perPage = $request->input('per_page', 50);
+        $times = Time::where('user_id', $userId)->orderBy('created_at', 'desc')->selectRaw('ROUND(time, 3) as time, created_at, valid')->paginate($perPage);;
         if ($times->isEmpty()) {
             return response()->json(['success' => false, 'error' => true, 'message' => 'No times found for this user'], 404);
         }
-        return response()->json(['success' => true, 'data' => $times], 200);
+        return response()->json(['success' => true, 'data' => $times->items(), 'current_page' => $times->currentPage(),'last_page' => $times->lastPage()], 200);
     }
 }
